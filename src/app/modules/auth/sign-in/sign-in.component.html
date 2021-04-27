@@ -1,0 +1,77 @@
+<div class="row justify-content-center">
+  <div class="col-md-5 mt-4">
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <mat-card class="pl-5 pr-5 text-center">
+        <div class="mb-4">
+          <h1 class="title">Po</h1>
+          <em class="sub-title">Polonium incidence</em>
+        </div>
+
+        <mat-form-field class="w-100 mb-3">
+          <mat-label>Usuario o correo electrónico</mat-label>
+
+          <input
+            matInput
+            required
+            type="text"
+            formControlName="userName"
+          >
+
+          <mat-icon class="mdi-input-icon" matSuffix>
+            <em class="mdi mdi-account"></em>
+          </mat-icon>
+
+          <mat-error *ngIf="form.get('userName').hasError('required')">
+            El usuario o correo eletrónico es requerido
+          </mat-error>
+
+          <mat-error *ngIf="form.get('userName').hasError('badUserName')">
+            {{ userNameServerMessage }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 mb-3">
+          <mat-label>Contraseña</mat-label>
+
+          <input
+            matInput
+            required
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+          >
+
+          <button
+            mat-button
+            matSuffix
+            mat-icon-button
+            class="mdi-input-icon"
+            type="button"
+            (click)="showPassword = !showPassword"
+          >
+            <em *ngIf="!showPassword" class="mdi mdi-eye"></em>
+            <em *ngIf="showPassword" class="mdi mdi-eye-off"></em>
+          </button>
+
+          <mat-error
+            *ngIf="form.get('password').hasError('required')"
+          >
+            La contraseña es requerida
+          </mat-error>
+
+          <mat-error *ngIf="form.get('password').hasError('badPassword')">
+            {{ passwordServerMessage }}
+          </mat-error>
+        </mat-form-field>
+
+        <div class="mb-3">
+          <a routerLink="/recover-password">No recuerdo mi contraseña</a><br>
+          <a routerLink="/sign-in-external">Me gustaria usar una cuenta personal</a>
+        </div>
+
+        <button mat-raised-button class="mb-4" color="primary">
+          Iniciar sesión <em class="mdi mdi-login"></em>
+        </button>
+      </mat-card>
+    </form>
+  </div>
+</div>
