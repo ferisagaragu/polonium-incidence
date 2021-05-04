@@ -1,11 +1,8 @@
-<div class="row justify-content-center">
+<div class="row justify-content-center animate__animated animate__fadeIn">
   <div class="col-md-5 mt-4">
     <form [formGroup]="form" (ngSubmit)="save()">
-      <mat-card class="pl-5 pr-5 text-center">
-        <div class="mb-4">
-          <h1 class="title">Po</h1>
-          <em class="sub-title">Polonium incidence</em>
-        </div>
+      <mat-card class="pl-5 pr-5 text-center mobile-not-card">
+        <app-logo></app-logo>
 
         <mat-form-field class="w-100 mb-3">
           <mat-label>Usuario o correo electrónico</mat-label>
@@ -15,6 +12,7 @@
             required
             type="text"
             formControlName="userName"
+            placeholder="incidence@polonium.com"
           >
 
           <mat-icon class="mdi-input-icon" matSuffix>
@@ -22,7 +20,7 @@
           </mat-icon>
 
           <mat-error *ngIf="form.get('userName').hasError('required')">
-            El usuario o correo eletrónico es requerido
+            El usuario o correo electrónico es requerido
           </mat-error>
 
           <mat-error *ngIf="form.get('userName').hasError('badUserName')">
@@ -36,8 +34,9 @@
           <input
             matInput
             required
-            [type]="showPassword ? 'text' : 'password'"
             formControlName="password"
+            placeholder="Contraseña de Polonium Incidence"
+            [type]="showPassword ? 'text' : 'password'"
           >
 
           <button
@@ -63,12 +62,39 @@
           </mat-error>
         </mat-form-field>
 
-        <div class="mb-3">
-          <a routerLink="/recover-password">No recuerdo mi contraseña</a><br>
-          <a routerLink="/sign-in-external">Me gustaria usar una cuenta personal</a>
+        <div *ngIf="load" class="text-center mb-4">
+          <mat-spinner diameter="50"></mat-spinner>
         </div>
 
-        <button mat-raised-button class="mb-4" color="primary">
+        <div class="mb-3">
+          <a routerLink="/auth/recover-password" [class.disabled-link]="load">
+            No recuerdo mi contraseña
+          </a>
+
+          <br>
+
+          <a routerLink="/auth/sign-in-code" [class.disabled-link]="load">
+            Me gustaría usar una cuenta personal
+          </a>
+        </div>
+
+        <button
+          mat-raised-button
+          class="mb-4"
+          color="primary"
+          type="button"
+          [disabled]="load"
+          (click)="router.navigate(['auth/sign-up'])"
+        >
+          Quiero registrarme <em class="mdi mdi-account-plus"></em>
+        </button>
+
+        <button
+          mat-raised-button
+          class="mb-4 ml-2"
+          color="primary"
+          [disabled]="load"
+        >
           Iniciar sesión <em class="mdi mdi-login"></em>
         </button>
       </mat-card>

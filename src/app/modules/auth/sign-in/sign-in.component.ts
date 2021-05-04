@@ -1,51 +1,70 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/http/auth.service';
+import { Router } from '@angular/router';
+import { SessionService, SweetAlert2Service } from 'ng-urxnium';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss']
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent {
 
   form: FormGroup;
   userNameServerMessage: String;
   passwordServerMessage: String;
   showPassword: boolean;
+  load: boolean;
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private sessionService: SessionService,
+    private swal: SweetAlert2Service,
+    public router: Router
   ) {
     this.createForm();
     this.showPassword = false;
+    this.load = false;
   }
 
-  ngOnInit(): void { }
-
   save(): void {
-    console.log(this.form.get('password'))
-
-
     if (this.form.invalid) {
       return;
     }
 
+    this.load = true;
+    this.form.disable();
+
     this.authService.signIn(this.form.value).subscribe(
       resp => {
-        console.log(resp);
-      }, ({ error }) => {
-        console.log(error.message);
-        if (error.message.includes('usuario')) {
+        this.sessionService.signIn(resp.session, resp);
+        this.form.enable();
+        this.load = false;
+        this.router.navigate(['dashboard']);
+      }, (error) => {
+        this.form.enable();
+        this.load = false;
+
+        if (error.includes('usuario')) {
           this.form.get('userName').setErrors({ badUserName: true});
-          this.userNameServerMessage = error.message;
+          this.userNameServerMessage = error;
+          return;
         }
 
-        if (error.message.includes('contraseña')) {
+        if (error.includes('contraseña')) {
           this.form.get('password').setErrors({ badPassword: true});
-          this.passwordServerMessage = error.message;
+          this.passwordServerMessage = error;
+          return;
         }
+
+        this.swal.fire({
+          icon: 'error',
+          title: 'Hubo un problema al iniciar sesión',
+          text: error,
+          theme: 'material'
+        });
       }
     );
   }
