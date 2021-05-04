@@ -43,7 +43,7 @@ export class SignInComponent {
         this.form.enable();
         this.load = false;
         this.router.navigate(['dashboard']);
-      }, (error) => {
+      }, error => {
         this.form.enable();
         this.load = false;
 
